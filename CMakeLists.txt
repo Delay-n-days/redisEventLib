@@ -6,7 +6,7 @@ set(CMAKE_C_STANDARD 99)
 # 设置hiredis路径
 set(HIREDIS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/hiredis")
 set(HIREDIS_INCLUDE_DIR "${HIREDIS_DIR}")
-set(HIREDIS_LIB_DIR "${HIREDIS_DIR}/build")
+set(HIREDIS_LIB_DIR "${HIREDIS_DIR}/build/Release")
 
 # 包含hiredis头文件
 include_directories(${HIREDIS_INCLUDE_DIR})
@@ -24,8 +24,8 @@ set_target_properties(redis_pubsub PROPERTIES
 # 复制依赖DLL
 add_custom_command(TARGET redis_pubsub POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
-    "${HIREDIS_LIB_DIR}/libhiredis.dll"
-    "$<TARGET_FILE_DIR:redis_pubsub>/libhiredis.dll"
+    "${HIREDIS_LIB_DIR}/hiredis.dll"
+    "$<TARGET_FILE_DIR:redis_pubsub>/hiredis.dll"
     COMMENT "Copying hiredis DLL..."
 )
 
@@ -40,15 +40,15 @@ target_link_libraries(subscriber hiredis ws2_32)
 
 add_custom_command(TARGET publisher POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
-    "${HIREDIS_LIB_DIR}/libhiredis.dll"
-    "$<TARGET_FILE_DIR:publisher>/libhiredis.dll"
+    "${HIREDIS_LIB_DIR}/hiredis.dll"
+    "$<TARGET_FILE_DIR:publisher>/hiredis.dll"
     COMMENT "Copying hiredis DLL..."
 )
 
 add_custom_command(TARGET subscriber POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
-    "${HIREDIS_LIB_DIR}/libhiredis.dll"
-    "$<TARGET_FILE_DIR:subscriber>/libhiredis.dll"
+    "${HIREDIS_LIB_DIR}/hiredis.dll"
+    "$<TARGET_FILE_DIR:subscriber>/hiredis.dll"
     COMMENT "Copying hiredis DLL..."
 )
 

@@ -12,14 +12,11 @@
     <Description>Redis PubSub C# .NET 8 Client</Description>
   </PropertyGroup>
 
-  <!-- 复制DLL到输出目录 -->
-  <ItemGroup>
-    <None Update="build/libredis_pubsub.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="build/libhiredis.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+  <!-- 复制MSVC编译的DLL到输出目录 -->
+  <Target Name="CopyDlls" AfterTargets="Build">
+    <Copy SourceFiles="build/Release/redis_pubsub.dll" DestinationFolder="$(OutputPath)" ContinueOnError="false" />
+    <Copy SourceFiles="build/Release/hiredis.dll" DestinationFolder="$(OutputPath)" ContinueOnError="false" />
+    <Message Text="Copied Redis PubSub DLLs to $(OutputPath)" Importance="high" />
+  </Target>
 
 </Project>

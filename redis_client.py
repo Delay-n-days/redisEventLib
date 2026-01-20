@@ -44,25 +44,45 @@ class RedisPubSubDLL:
         self._setup_functions()
     
     def _get_default_dll_path(self) -> str:
-        """获取默认DLL路径"""
-        build_dir = os.path.join(os.path.dirname(__file__), "build")
-        dll_path = os.path.join(build_dir, "libredis_pubsub.dll")
-        return os.path.abspath(dll_path)
+        """获取默认DLL路径 (MSVC编译版本)"""
+        # 优先使用MSVC编译的版本
+        possible_paths = [
+            # Release版本 (MSVC)
+            os.path.join(os.path.dirname(__file__), "build/Release/redis_pubsub.dll"),
+            # 备用路径
+            os.path.join(os.path.dirname(__file__), "build/Release/redis_pubsub.dll"),
+        ]
+        
+        for path in possible_paths:
+            abs_path = os.path.abspath(path)
+            if os.path.exists(abs_path):
+                return abs_path
+        
+        # 如果都不存在，返回第一个路径并让加载函数报错
+        return os.path.abspath(possible_paths[0])
     
     def _load_dll(self):
         """加载DLL文件"""
         # print(f"[INFO] Loading DLL from: {self._dll_path}")
         
-        if not os.path.exists(self._dll_path):
-            raise FileNotFoundError(f"DLL not found: {self._dll_path}")
+        # 转换为绝对路径
+        abs_dll_path = os.path.abspath(self._dll_path)
+        
+        if not os.path.exists(abs_dll_path):
+            print(f"[ERROR] DLL not found: {abs_dll_path}")
+            raise FileNotFoundError(f"DLL not found: {abs_dll_path}")
         
         try:
             # 添加DLL目录到搜索路径
-            build_dir = os.path.dirname(self._dll_path)
-            if hasattr(os, 'add_dll_directory'):
-                os.add_dll_directory(build_dir)
+            build_dir = os.path.dirname(abs_dll_path)
+            if hasattr(os, 'add_dll_directory') and build_dir and os.path.isabs(build_dir):
+                try:
+                    os.add_dll_directory(build_dir)
+                    print(f"[INFO] Added DLL search path: {build_dir}")
+                except OSError as e:
+                    print(f"[WARNING] Failed to add DLL directory: {e}")
             
-            self._dll = ctypes.CDLL(self._dll_path)
+            self._dll = ctypes.CDLL(abs_dll_path)
             # print("[OK] DLL loaded successfully")
         except OSError as e:
             print(f"[ERROR] Failed to load DLL: {e}")

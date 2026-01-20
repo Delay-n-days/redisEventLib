@@ -25,19 +25,19 @@ public class RedisPubSubClient : IDisposable
     /// <summary>
     /// int redis_init(const char* hostname, int port)
     /// </summary>
-    [DllImport("libredis_pubsub.dll", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("redis_pubsub.dll", CallingConvention = CallingConvention.Cdecl)]
     private static extern int redis_init([MarshalAs(UnmanagedType.LPStr)] string hostname, int port);
 
     /// <summary>
     /// int redis_close()
     /// </summary>
-    [DllImport("libredis_pubsub.dll", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("redis_pubsub.dll", CallingConvention = CallingConvention.Cdecl)]
     private static extern int redis_close();
 
     /// <summary>
     /// int redis_publish(const char* channel, const char* message)
     /// </summary>
-    [DllImport("libredis_pubsub.dll", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("redis_pubsub.dll", CallingConvention = CallingConvention.Cdecl)]
     private static extern int redis_publish(
         [MarshalAs(UnmanagedType.LPStr)] string channel,
         [MarshalAs(UnmanagedType.LPStr)] string message);
@@ -45,7 +45,7 @@ public class RedisPubSubClient : IDisposable
     /// <summary>
     /// int redis_subscribe(const char* channel, PubSubCallback callback)
     /// </summary>
-    [DllImport("libredis_pubsub.dll", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("redis_pubsub.dll", CallingConvention = CallingConvention.Cdecl)]
     private static extern int redis_subscribe(
         [MarshalAs(UnmanagedType.LPStr)] string channel,
         NativePubSubCallback callback);
@@ -177,7 +177,7 @@ public class RedisPubSubClient : IDisposable
                     {
                         string channelStr = Marshal.PtrToStringAnsi(channelPtr) ?? "";
                         string messageStr = Marshal.PtrToStringAnsi(messagePtr) ?? "";
-                        Console.WriteLine($"\n[◇ CALLBACK] Received from '{channelStr}':");
+                        Console.WriteLine($"\n[CALLBACK] Received from '{channelStr}':");
                         Console.WriteLine($"             Message: {messageStr}");
                         callback?.Invoke(channelStr, messageStr);
                     }
