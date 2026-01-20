@@ -51,7 +51,7 @@ class RedisPubSubDLL:
     
     def _load_dll(self):
         """加载DLL文件"""
-        print(f"[INFO] Loading DLL from: {self._dll_path}")
+        # print(f"[INFO] Loading DLL from: {self._dll_path}")
         
         if not os.path.exists(self._dll_path):
             raise FileNotFoundError(f"DLL not found: {self._dll_path}")
@@ -63,7 +63,7 @@ class RedisPubSubDLL:
                 os.add_dll_directory(build_dir)
             
             self._dll = ctypes.CDLL(self._dll_path)
-            print("[OK] DLL loaded successfully")
+            # print("[OK] DLL loaded successfully")
         except OSError as e:
             print(f"[ERROR] Failed to load DLL: {e}")
             raise
@@ -109,7 +109,7 @@ class RedisPubSubDLL:
                 result = self._redis_init(hostname.encode('utf-8'), port)
                 if result == 0:
                     self._connected = True
-                    print(f"[OK] Connected to Redis {hostname}:{port}")
+                    # print(f"[OK] Connected to Redis {hostname}:{port}")
                     return True
                 else:
                     print(f"[ERROR] Connection failed with code {result}")
@@ -132,7 +132,7 @@ class RedisPubSubDLL:
                 self._connected = False
                 self._callbacks.clear()
                 self._dll_callbacks.clear()
-                print("[OK] Disconnected from Redis")
+                # print("[OK] Disconnected from Redis")
                 return result == 0
         except Exception as e:
             print(f"[ERROR] Disconnection error: {e}")
@@ -159,8 +159,8 @@ class RedisPubSubDLL:
                     channel.encode('utf-8'),
                     message.encode('utf-8')
                 )
-                print(f"[PUBLISH] Channel: {channel} | Message: {message}")
-                print(f"           Subscribers: {result}")
+                # print(f"[PUBLISH] Channel: {channel} | Message: {message}")
+                # print(f"           Subscribers: {result}")
                 return result
         except Exception as e:
             print(f"[ERROR] Publish error: {e}")
@@ -193,8 +193,8 @@ class RedisPubSubDLL:
                     try:
                         channel_str = channel_ptr.decode('utf-8') if isinstance(channel_ptr, bytes) else channel_ptr
                         message_str = message_ptr.decode('utf-8') if isinstance(message_ptr, bytes) else message_ptr
-                        print(f"\n[CALLBACK] Received from '{channel_str}':")
-                        print(f"           Message: {message_str}")
+                        # print(f"\n[CALLBACK] Received from '{channel_str}':")
+                        # print(f"           Message: {message_str}")
                         callback(channel_str, message_str)
                     except Exception as e:
                         print(f"[ERROR] Callback error: {e}")
@@ -211,7 +211,7 @@ class RedisPubSubDLL:
                 result = self._redis_subscribe(channel.encode('utf-8'), dll_callback)
                 
                 if result == 0:
-                    print(f"[OK] Subscribed to channel: {channel}")
+                    # print(f"[OK] Subscribed to channel: {channel}")
                     return True
                 else:
                     print(f"[ERROR] Subscribe failed with code {result}")

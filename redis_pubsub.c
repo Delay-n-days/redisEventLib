@@ -46,7 +46,7 @@ REDIS_PUBSUB_API int redis_init(const char* hostname, int port) {
     g_running = 1;
     g_callback_count = 0;
     
-    fprintf(stdout, "[INFO] Redis connected: %s:%d\n", hostname, port);
+    // fprintf(stdout, "[INFO] Redis connected: %s:%d\n", hostname, port);
     return 0;
 }
 
@@ -70,7 +70,7 @@ REDIS_PUBSUB_API int redis_close() {
     LeaveCriticalSection(&g_lock);
     DeleteCriticalSection(&g_lock);
     
-    fprintf(stdout, "[INFO] Redis disconnected\n");
+    // fprintf(stdout, "[INFO] Redis disconnected\n");
     return 0;
 }
 
@@ -100,8 +100,8 @@ REDIS_PUBSUB_API int redis_publish(const char* channel, const char* message) {
     long long subscribers = reply->integer;
     freeReplyObject(reply);
     
-    fprintf(stdout, "[PUBLISH] Channel: %s | Message: %s | Subscribers: %lld\n", 
-            channel, message, subscribers);
+    // fprintf(stdout, "[PUBLISH] Channel: %s | Message: %s | Subscribers: %lld\n", 
+            // channel, message, subscribers);
     
     LeaveCriticalSection(&g_lock);
     return (int)subscribers;
@@ -141,7 +141,7 @@ REDIS_PUBSUB_API int redis_subscribe(const char* channel, PubSubCallback callbac
         return -1;
     }
     
-    fprintf(stdout, "[SUBSCRIBE] Subscribed to channel: %s\n", channel);
+    // fprintf(stdout, "[SUBSCRIBE] Subscribed to channel: %s\n", channel);
     
     /* 如果是第一个订阅，启动处理线程 */
     if (g_callback_count == 1) {
@@ -161,7 +161,7 @@ REDIS_PUBSUB_API int redis_subscribe(const char* channel, PubSubCallback callbac
 /* ==================== 订阅处理线程 ==================== */
 
 static unsigned int __stdcall subscription_thread(void *arg) {
-    fprintf(stdout, "[INFO] Subscription thread started\n");
+    // fprintf(stdout, "[INFO] Subscription thread started\n");
     
     while (g_running && g_sub_context) {
         redisReply *reply = NULL;
@@ -183,7 +183,7 @@ static unsigned int __stdcall subscription_thread(void *arg) {
                 const char *channel = reply->element[1]->str;
                 const char *message = reply->element[2]->str;
                 
-                fprintf(stdout, "[MESSAGE] Channel: %s | Message: %s\n", channel, message);
+                // fprintf(stdout, "[MESSAGE] Channel: %s | Message: %s\n", channel, message);
                 
                 /* 查找并调用对应的回调函数 */
                 EnterCriticalSection(&g_lock);
@@ -200,7 +200,7 @@ static unsigned int __stdcall subscription_thread(void *arg) {
         freeReplyObject(reply);
     }
     
-    fprintf(stdout, "[INFO] Subscription thread ended\n");
+    // fprintf(stdout, "[INFO] Subscription thread ended\n");
     return 0;
 }
 
